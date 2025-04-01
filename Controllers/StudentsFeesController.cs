@@ -42,7 +42,6 @@ namespace MyAPI.Controllers
                 {9, "September"}, {10, "October"}, {11, "November"}, {12, "December"}
             };
 
-
             var studentFees = await _context.TblStuFeeDueAndReceiveds
                 .Where(f => f.StuId == stuId && f.FeeUnpaid > 0)
                 .Join(_context.TblGenFeeTypes,
