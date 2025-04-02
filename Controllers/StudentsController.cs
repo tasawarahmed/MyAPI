@@ -40,8 +40,9 @@ namespace MyAPI.Controllers
                 .Select(s => new
                 {
                     s.StuId,
-                    s.StuName
-                })
+                    s.StuName, 
+                    s.StuGender
+                })  
                 .ToListAsync();
 
             if (!students.Any())
