@@ -40,9 +40,33 @@ namespace MyAPI.Controllers
                 .Select(s => new
                 {
                     s.StuId,
+                    s.StuCurrentClass,
                     s.StuName, 
                     s.StuGender
                 })  
+                .ToListAsync();
+
+            if (!students.Any())
+            {
+                return NotFound();
+            }
+
+            return Ok(students);
+        }
+
+        // GET: api/Students/3520222589577
+        [HttpGet("GetByFatherMobile/{stuFatherMobile}")]
+        public async Task<ActionResult<IEnumerable<object>>> GetStudentsByFatherMobile(string stuFatherMobile)
+        {
+            var students = await _context.TblStuMains
+                .Where(s => s.StuFatherMobile == stuFatherMobile)
+                .Select(s => new
+                {
+                    s.StuId,
+                    s.StuCurrentClass,
+                    s.StuName,
+                    s.StuGender
+                })
                 .ToListAsync();
 
             if (!students.Any())
