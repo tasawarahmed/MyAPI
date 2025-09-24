@@ -15,7 +15,9 @@ namespace MyAPI.Models
             : base(options)
         {
         }
-
+        public virtual DbSet<ParentsMessage> ParentsMessages { get; set; } = null!;
+        public virtual DbSet<Gallery> Galleries { get; set; } = null!;
+        public virtual DbSet<Complaint> Complaints { get; set; } = null!;
         public virtual DbSet<TblAccAssociation> TblAccAssociations { get; set; } = null!;
         public virtual DbSet<TblAccTransaction> TblAccTransactions { get; set; } = null!;
         public virtual DbSet<TblAccTransactionsOld> TblAccTransactionsOlds { get; set; } = null!;
@@ -249,6 +251,103 @@ namespace MyAPI.Models
                     .IsUnicode(false)
                     .HasColumnName("remarks");
             });
+
+            modelBuilder.Entity<Gallery>(entity =>
+            {
+                entity.ToTable("Galleries", "dbo");
+
+                entity.HasKey(e => e.Id);
+
+                entity.Property(e => e.Id)
+                    .HasColumnName("id")
+                    .ValueGeneratedOnAdd();
+
+                entity.Property(e => e.Date)
+                    .HasColumnName("date")
+                    .HasColumnType("datetime");
+
+                entity.Property(e => e.Event)
+                    .HasColumnName("event")
+                    .HasColumnType("nvarchar(max)");
+
+                entity.Property(e => e.Link)
+                    .HasColumnName("link")
+                    .HasColumnType("nvarchar(max)");
+
+                entity.Property(e => e.Remarks)
+                    .HasColumnName("remarks")
+                    .HasColumnType("nvarchar(max)");
+            });
+
+            modelBuilder.Entity<ParentsMessage>(entity =>
+            {
+                entity.ToTable("ParentsMessages", "dbo");
+
+                entity.HasKey(e => e.Id);
+
+                entity.Property(e => e.Id)
+                    .HasColumnName("id")
+                    .ValueGeneratedOnAdd();
+
+                entity.Property(e => e.Date)
+                    .HasColumnName("date")
+                    .HasColumnType("datetime");
+
+                entity.Property(e => e.StuId)
+                    .HasColumnName("stuID");
+
+                entity.Property(e => e.TeacherId)
+                    .HasColumnName("teacherID");
+
+                entity.Property(e => e.Message)
+                    .HasColumnName("message")
+                    .HasColumnType("nvarchar(max)");
+
+                entity.Property(e => e.Reply)
+                    .HasColumnName("reply")
+                    .HasColumnType("nvarchar(max)");
+
+                entity.Property(e => e.IsReplied)
+                    .HasColumnName("isReplied");
+
+                entity.Property(e => e.Remarks)
+                    .HasColumnName("remarks")
+                    .HasColumnType("nvarchar(max)");
+            });
+
+            modelBuilder.Entity<Complaint>(entity =>
+            {
+                entity.ToTable("Complaints", "dbo");
+
+                entity.HasKey(e => e.Id);
+
+                entity.Property(e => e.Id)
+                    .HasColumnName("id")
+                    .ValueGeneratedOnAdd();
+
+                entity.Property(e => e.Date)
+                    .HasColumnName("date")
+                    .HasColumnType("datetime");
+
+                entity.Property(e => e.StuId)
+                    .HasColumnName("stuID");
+
+                entity.Property(e => e.Message)
+                    .HasColumnName("message")
+                    .HasColumnType("nvarchar(max)");
+
+                entity.Property(e => e.Reply)
+                    .HasColumnName("reply")
+                    .HasColumnType("nvarchar(max)");
+
+                entity.Property(e => e.IsReplied)
+                    .HasColumnName("isReplied");
+
+                entity.Property(e => e.Remarks)
+                    .HasColumnName("remarks")
+                    .HasColumnType("nvarchar(max)");
+            });
+
 
             modelBuilder.Entity<TblAccTransaction>(entity =>
             {
