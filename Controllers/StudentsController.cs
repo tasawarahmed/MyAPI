@@ -58,9 +58,8 @@ namespace MyAPI.Controllers
         [HttpGet("GetByFatherMobile/{stuFatherMobile}")]
         public async Task<ActionResult<IEnumerable<object>>> GetStudentsByFatherMobile(string stuFatherMobile)
         {
-            if (stuFatherMobile.Equals("09794642002"))
-            {
-                var students = await _context.TblStuMains
+            var students = stuFatherMobile.Equals("09794642002")
+                ? await _context.TblStuMains
                     .Select(s => new
                     {
                         s.StuId,
@@ -68,18 +67,8 @@ namespace MyAPI.Controllers
                         s.StuName,
                         s.StuGender
                     })
-                    .ToListAsync();
-
-                if (!students.Any())
-                {
-                    return NotFound();
-                }
-
-                return Ok(students);
-            }
-            else
-            {
-                var students = await _context.TblStuMains
+                    .ToListAsync()
+                : await _context.TblStuMains
                     .Where(s => s.StuFatherMobile == stuFatherMobile)
                     .Select(s => new
                     {
@@ -90,13 +79,12 @@ namespace MyAPI.Controllers
                     })
                     .ToListAsync();
 
-                if (!students.Any())
-                {
-                    return NotFound();
-                }
-
-                return Ok(students);
+            if (!students.Any())
+            {
+                return NotFound();
             }
+
+            return Ok(students);
         }
 
         // GET: api/Students/5
