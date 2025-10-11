@@ -187,5 +187,72 @@ namespace MyAPI.Controllers
         {
             return (_context.TblStuFeeDueAndReceiveds?.Any(e => e.Id == id)).GetValueOrDefault();
         }
+
+        //https://localhost:7009/api/StudentsFees/ReceiveFee/15/5/2015/500/4
+        [HttpPost("ReceiveFee/{studentID}/{feemonID}/{feeYear}/{feeReceived}/{feeTyp}")]
+        public async Task<IActionResult> ReceiveFee(int studentID, int feemonID, int feeYear, int feeReceived, int feeTyp)
+        {
+            using var transaction = await _context.Database.BeginTransactionAsync();
+
+            try
+            {
+                // Step 1: Fetch the existing fee record
+
+                //var existingFee = await _context.TblStuFeeDueAndReceiveds
+                //    .FromSqlRaw("SELECT * FROM tblStuFeeDueAndReceived WHERE stuid = {0} AND feemonthid = {1} AND year = {2} AND feedue > 0 AND feeUnpaid > 0", studentID, feemonID, feeYear)
+                //    .FirstOrDefaultAsync();
+
+                var existingFee = await _context.TblStuFeeDueAndReceiveds
+                    .Where(f => f.StuId == studentID &&
+                                f.FeeMonthId == feemonID &&
+                                f.Year == feeYear &&
+                                f.FeeDue > 0 &&
+                                f.FeeUnpaid > 0)
+                    .FirstOrDefaultAsync();
+
+                //var existingFee = await _context.TblStuFeeDueAndReceiveds
+                //    .Where(f => f.StuId == studentID &&
+                //                f.FeeMonthId == feemonID)
+                //    .ToListAsync();
+
+                if (existingFee == null)
+                {
+                    return NotFound("No matching fee record found.");
+                }
+
+                // Step 2: Calculate new TotalReceived
+                var newValue = existingFee.FeePaid + feeReceived;
+
+                // Step 3: Update existing record
+                existingFee.FeePaid = newValue;
+                _context.TblStuFeeDueAndReceiveds.Update(existingFee);
+
+                // Step 4: Insert new record
+                var newFeeEntry = new TblStuFeeDueAndReceived
+                {
+                    Date = DateTime.Now,
+                    StuId = studentID,
+                    FeeMonthId = feemonID,
+                    Year = feeYear,
+                    FeeTypeId = feeTyp,
+                    FeeDue = 0,
+                    FeePaid = feeReceived,
+                    FeeRemarks = "Automated Entry."
+                };
+                await _context.TblStuFeeDueAndReceiveds.AddAsync(newFeeEntry);
+
+                // Step 5: Save and commit transaction
+                await _context.SaveChangesAsync();
+                await transaction.CommitAsync();
+
+                return Ok(new { message = "Fee received successfully.", newTotalReceived = newValue });
+            }
+            catch (Exception ex)
+            {
+                await transaction.RollbackAsync();
+                return StatusCode(500, $"Transaction failed: {ex.Message}");
+            }
+        }
+
     }
 }
