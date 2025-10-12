@@ -10,6 +10,7 @@ namespace MyAPI.Models
         public string ExamDescription { get; set; } = null!;
         public string? Remarks { get; set; }
         public bool IsActive { get; set; }
+        public bool IsPosted { get; set; }
         public bool IsRecordEntered { get; set; }
         public int? SessionId { get; set; }
     }

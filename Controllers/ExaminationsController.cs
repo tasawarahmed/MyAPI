@@ -28,7 +28,7 @@ namespace MyAPI.Controllers
           {
               return NotFound();
           }
-            return await _context.TblStuExams.Where(e => e.IsActive).ToListAsync();
+            return await _context.TblStuExams.Where(e => e.IsPosted).ToListAsync();
         }
 
         // GET: api/Examinations/5

@@ -65,6 +65,22 @@ namespace MyAPI.Controllers
             return Ok(studentFees);
         }
 
+        // GET: api/StudentsFees/GetTotalPayableFeeByStudentId/5
+        [HttpGet("GetTotalPayableFeeByStudentId/{stuId}")]
+        public async Task<ActionResult<int>> GetTotalPayableFee(int stuId)
+        {
+            var totalFeePayable = await _context.TblStuFeeDueAndReceiveds
+                .Where(f => f.StuId == stuId && f.FeeUnpaid > 0)
+                .SumAsync(f => f.FeeUnpaid);
+
+            if (totalFeePayable == 0)
+            {
+                return NotFound("No unpaid fees found for the student.");
+            }
+
+            return Ok(totalFeePayable);
+        }
+
         // GET: api/StudentsFees/GetPaidFeeByStudentId/5
         [HttpGet("GetPaidFeeByStudentId/{stuId}")]
         public async Task<ActionResult<IEnumerable<object>>> GetStudentPaidFees(int stuId)
@@ -188,7 +204,7 @@ namespace MyAPI.Controllers
             return (_context.TblStuFeeDueAndReceiveds?.Any(e => e.Id == id)).GetValueOrDefault();
         }
 
-        //https://localhost:7009/api/StudentsFees/ReceiveFee/15/5/2015/500/4
+        // POST https://localhost:7009/api/StudentsFees/ReceiveFee/15/5/2015/500/4
         [HttpPost("ReceiveFee/{studentID}/{feemonID}/{feeYear}/{feeReceived}/{feeTyp}")]
         public async Task<IActionResult> ReceiveFee(int studentID, int feemonID, int feeYear, int feeReceived, int feeTyp)
         {

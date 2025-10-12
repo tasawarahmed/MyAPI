@@ -5053,6 +5053,11 @@ namespace MyAPI.Models
                     .HasColumnName("isActive")
                     .HasDefaultValueSql("((1))");
 
+                entity.Property(e => e.IsPosted)
+                    .IsRequired()
+                    .HasColumnName("isPosted")
+                    .HasDefaultValueSql("((0))");
+
                 entity.Property(e => e.IsRecordEntered).HasColumnName("isRecordEntered");
 
                 entity.Property(e => e.Remarks)
