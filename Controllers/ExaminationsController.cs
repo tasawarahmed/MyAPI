@@ -31,6 +31,44 @@ namespace MyAPI.Controllers
             return await _context.TblStuExams.Where(e => e.IsPosted).ToListAsync();
         }
 
+        [HttpGet("ExamsByStudent/{stuId}")]
+        public async Task<ActionResult<IEnumerable<TblStuExam>>> GetTblStuExams(int stuId)
+        {
+            if (_context.TblStuExams == null)
+            {
+                return NotFound();
+            }
+
+            // Get exams that are posted, ordered by examId descending, limited to 10
+            var exams = await _context.TblStuExams
+                .Where(e => e.IsPosted)
+                .OrderByDescending(e => e.ExamId)
+                .Take(10)
+                .ToListAsync();
+
+            // Filter exams to only those where student has results
+            var examsWithResults = new List<TblStuExam>();
+
+            foreach (var exam in exams)
+            {
+                bool hasResult = await _context.TblStuExamResults
+                    .AnyAsync(r => r.StuId == stuId && r.ExamId == exam.ExamId);
+
+                if (hasResult)
+                {
+                    examsWithResults.Add(exam);
+                }
+            }
+
+            if (!examsWithResults.Any())
+            {
+                return NotFound();
+            }
+
+            return Ok(examsWithResults);
+        }
+
+
         // GET: api/Examinations/5
         [HttpGet("{id}")]
         public async Task<ActionResult<TblStuExam>> GetTblStuExam(int id)
